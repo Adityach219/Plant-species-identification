@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  plant-identifier-web:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./logs:/app/logs
+    environment:
+      - PYTHONPATH=/app
+    command: ["python", "-m", "streamlit", "run", "webapp/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+
+  plant-identifier-api:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./logs:/app/logs
+    environment:
+      - PYTHONPATH=/app
+    command: ["python", "webapp/flask_api.py", "--model", "models/plant_classifier_custom_best.h5", "--classes", "models/plant_classifier_custom_classes.json", "--host", "0.0.0.0"]
